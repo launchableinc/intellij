@@ -38,7 +38,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import java.awt.Component;
 import java.util.List;
-import javax.annotation.Nullable;
 import javax.swing.JComponent;
 import org.jdom.Element;
 import org.jetbrains.android.facet.AndroidFacet;
@@ -117,14 +116,8 @@ public class BlazeAndroidRunConfigurationCommonState implements RunConfiguration
    * We collect errors rather than throwing to avoid missing fatal errors by exiting early for a
    * warning.
    */
-  public List<ValidationError> validate(@Nullable AndroidFacet facet) {
+  public List<ValidationError> validate(AndroidFacet facet) {
     List<ValidationError> errors = Lists.newArrayList();
-    // If facet is null, we can't validate the managers, but that's fine because
-    // BlazeAndroidRunConfigurationValidationUtil.validateFacet will give a fatal error.
-    if (facet == null) {
-      return errors;
-    }
-
     errors.addAll(deployTargetManager.validate(facet));
     errors.addAll(debuggerManager.validate(facet));
     Project project = facet.getModule().getProject();

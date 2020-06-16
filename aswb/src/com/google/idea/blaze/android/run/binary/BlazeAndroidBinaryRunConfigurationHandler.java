@@ -17,11 +17,10 @@ package com.google.idea.blaze.android.run.binary;
 
 import static com.android.tools.idea.run.deployment.DeviceAndSnapshotComboBoxAction.DEPLOYS_TO_LOCAL_DEVICE;
 
-import com.android.annotations.VisibleForTesting;
 import com.android.tools.idea.run.ValidationError;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.idea.blaze.android.run.BlazeAndroidRunConfigurationCommonState;
 import com.google.idea.blaze.android.run.BlazeAndroidRunConfigurationHandler;
 import com.google.idea.blaze.android.run.BlazeAndroidRunConfigurationValidationUtil;
@@ -29,7 +28,6 @@ import com.google.idea.blaze.android.run.binary.AndroidBinaryLaunchMethodsUtils.
 import com.google.idea.blaze.android.run.binary.mobileinstall.BlazeAndroidBinaryMobileInstallRunContext;
 import com.google.idea.blaze.android.run.runner.BlazeAndroidRunConfigurationRunner;
 import com.google.idea.blaze.android.run.runner.BlazeAndroidRunContext;
-import com.google.idea.blaze.android.sync.projectstructure.BlazeAndroidProjectStructureSyncer;
 import com.google.idea.blaze.base.command.BlazeCommandName;
 import com.google.idea.blaze.base.command.BlazeInvocationContext;
 import com.google.idea.blaze.base.logging.EventLoggingService;
@@ -44,6 +42,8 @@ import com.google.idea.blaze.base.run.ExecutorType;
 import com.google.idea.blaze.base.run.confighandler.BlazeCommandRunConfigurationRunner;
 import com.google.idea.blaze.base.run.state.RunConfigurationState;
 import com.google.idea.blaze.base.settings.Blaze;
+import com.google.idea.blaze.base.sync.data.BlazeDataStorage;
+import com.google.idea.blaze.base.sync.projectstructure.ModuleFinder;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
@@ -55,7 +55,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nullable;
@@ -103,15 +102,6 @@ public class BlazeAndroidBinaryRunConfigurationHandler
     return target instanceof Label ? (Label) target : null;
   }
 
-  @Nullable
-  public Module getModule() {
-    Label target = getLabel();
-    return target != null
-        ? BlazeAndroidProjectStructureSyncer.ensureRunConfigurationModule(
-            configuration.getProject(), target)
-        : null;
-  }
-
   @Override
   public BlazeCommandRunConfigurationRunner createRunner(
       Executor executor, ExecutionEnvironment env) throws ExecutionException {
@@ -133,10 +123,12 @@ public class BlazeAndroidBinaryRunConfigurationHandler
         BlazeAndroidRunConfigurationHandler.getCommandConfig(env);
     configuration.setTarget(configFromEnv.getSingleTarget());
 
-    Module module = getModule();
+    Module module =
+        ModuleFinder.getInstance(env.getProject())
+            .findModuleByName(BlazeDataStorage.WORKSPACE_MODULE_NAME);
     AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
     ProjectViewSet projectViewSet = ProjectViewManager.getInstance(project).getProjectViewSet();
-    BlazeAndroidRunConfigurationValidationUtil.validateExecution(module, facet, projectViewSet);
+    BlazeAndroidRunConfigurationValidationUtil.validateExecution(module, projectViewSet);
 
     ImmutableList<String> blazeFlags =
         configState
@@ -207,17 +199,20 @@ public class BlazeAndroidBinaryRunConfigurationHandler
    * warning. We use a separate method for the collection so the compiler prevents us from
    * accidentally throwing.
    */
-  private List<ValidationError> validate() {
-    List<ValidationError> errors = Lists.newArrayList();
-    Module module = getModule();
+  private ImmutableList<ValidationError> validate() {
+    ImmutableList.Builder<ValidationError> errors = ImmutableList.builder();
+    Module module =
+        ModuleFinder.getInstance(configuration.getProject())
+            .findModuleByName(BlazeDataStorage.WORKSPACE_MODULE_NAME);
     errors.addAll(BlazeAndroidRunConfigurationValidationUtil.validateModule(module));
-    AndroidFacet facet = null;
+
+    // BlazeAndroidRunConfigurationValidationUtil.validateModule(module) handles null module error.
     if (module != null) {
-      facet = AndroidFacet.getInstance(module);
-      errors.addAll(BlazeAndroidRunConfigurationValidationUtil.validateFacet(facet, module));
+      AndroidFacet facet = AndroidFacet.getInstance(module);
+      errors.addAll(getCommonState().validate(facet));
+      errors.addAll(configState.validate(facet));
     }
-    errors.addAll(configState.validate(facet));
-    return errors;
+    return errors.build();
   }
 
   @Override

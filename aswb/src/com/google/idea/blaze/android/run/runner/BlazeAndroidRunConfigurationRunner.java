@@ -153,7 +153,7 @@ public final class BlazeAndroidRunConfigurationRunner
     env.putCopyableUserData(DEVICE_SESSION_KEY, deviceSession);
 
     return new BlazeAndroidRunState(
-        module, env, launchOptionsBuilder, isDebug, deviceSession, runContext, debuggerManager);
+        env, launchOptionsBuilder, isDebug, deviceSession, runContext, debuggerManager);
   }
 
   private static String canDebug(

@@ -35,6 +35,7 @@ import com.google.idea.blaze.base.run.BlazeCommandRunConfigurationType;
 import com.google.idea.blaze.base.run.confighandler.BlazeCommandRunConfigurationHandler;
 import com.google.idea.blaze.base.run.confighandler.BlazeCommandRunConfigurationHandlerProvider;
 import com.google.idea.blaze.base.run.confighandler.BlazeCommandRunConfigurationHandlerProvider.TargetState;
+import com.google.idea.blaze.base.sync.data.BlazeDataStorage;
 import com.google.idea.blaze.base.sync.data.BlazeProjectDataManager;
 import com.google.idea.blaze.java.AndroidBlazeRules;
 import com.intellij.execution.RunManagerEx;
@@ -46,6 +47,7 @@ import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.extensions.LoadingOrder;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.util.Disposer;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -81,6 +83,7 @@ public class TestRecorderBlazeCommandRunConfigurationTest extends BlazeIntegrati
             .getExtensionPoint(BlazeCommandRunConfigurationHandlerProvider.EP_NAME);
     ep.registerExtension(mockHandler, LoadingOrder.FIRST);
     Disposer.register(getTestRootDisposable(), () -> ep.unregisterExtension(mockHandler));
+    ModuleManager.getInstance(getProject()).newModule(BlazeDataStorage.WORKSPACE_MODULE_NAME, "");
 
     MockBlazeProjectDataBuilder builder = MockBlazeProjectDataBuilder.builder(workspaceRoot);
     builder.setTargetMap(
@@ -186,7 +189,6 @@ public class TestRecorderBlazeCommandRunConfigurationTest extends BlazeIntegrati
     }
 
     @Nullable
-    @Override
     public Module getModule() {
       Label label = getLabel();
       if (label != null && label.equals(Label.create("//label:android_binary_rule"))) {
