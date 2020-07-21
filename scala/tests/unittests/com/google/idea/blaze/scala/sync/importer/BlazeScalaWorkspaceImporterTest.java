@@ -137,8 +137,8 @@ public class BlazeScalaWorkspaceImporterTest extends BlazeTestCase {
             return null;
           }
         });
-    applicationServices.register(
-        RemoteArtifactPrefetcher.class, new MockRemoteArtifactPrefetcher());
+    registerExtensionPoint(RemoteArtifactPrefetcher.EP_NAME, RemoteArtifactPrefetcher.class)
+        .registerExtension(new MockRemoteArtifactPrefetcher());
 
     ExtensionPoint<JavaLikeLanguage> javaLikeLanguages =
         registerExtensionPoint(JavaLikeLanguage.EP_NAME, JavaLikeLanguage.class);

@@ -27,6 +27,12 @@ import java.util.List;
  * artifacts to local directory.
  */
 public class DefaultPrefetcher implements RemoteArtifactPrefetcher {
+
+  @Override
+  public boolean isAvailable() {
+    return true;
+  }
+
   @Override
   public ListenableFuture<?> loadFilesInJvm(Collection<RemoteOutputArtifact> outputArtifacts) {
     List<ListenableFuture<?>> futures = new ArrayList<>();

@@ -17,14 +17,26 @@ package com.google.idea.blaze.base.prefetch;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.idea.blaze.base.command.buildresult.RemoteOutputArtifact;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import java.util.Collection;
 
 /** A service for fetching a batch of remote files */
 public interface RemoteArtifactPrefetcher {
+
+  ExtensionPointName<RemoteArtifactPrefetcher> EP_NAME =
+      ExtensionPointName.create("com.google.idea.blaze.RemoteArtifactPrefetcher");
+
   static RemoteArtifactPrefetcher getInstance() {
-    return ServiceManager.getService(RemoteArtifactPrefetcher.class);
+    for (RemoteArtifactPrefetcher remoteArtifactPrefetcher : EP_NAME.getExtensionList()) {
+      if (remoteArtifactPrefetcher.isAvailable()) {
+        return remoteArtifactPrefetcher;
+      }
+    }
+    throw new IllegalStateException("No RemoteArtifactPrefetcher service available");
   }
+
+  /** Whether an {@link RemoteArtifactPrefetcher} is available */
+  boolean isAvailable();
 
   /**
    * Fetch file content for a list of {@link RemoteOutputArtifact}. Only load content into JVM

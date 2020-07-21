@@ -191,8 +191,8 @@ public class BlazeAndroidWorkspaceImporterTest extends BlazeTestCase {
     registerExtensionPoint(BuildSystemProvider.EP_NAME, BuildSystemProvider.class)
         .registerExtension(new BazelBuildSystemProvider());
 
-    applicationServices.register(
-        RemoteArtifactPrefetcher.class, new MockRemoteArtifactPrefetcher());
+    registerExtensionPoint(RemoteArtifactPrefetcher.EP_NAME, RemoteArtifactPrefetcher.class)
+        .registerExtension(new MockRemoteArtifactPrefetcher());
   }
 
   private BlazeAndroidImportResult importWorkspace(

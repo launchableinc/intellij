@@ -222,8 +222,6 @@
     <applicationService serviceImplementation="com.google.idea.blaze.base.sync.projectview.RelatedWorkspacePathFinder"/>
     <applicationService serviceInterface="com.google.idea.blaze.base.prefetch.PrefetchService"
                         serviceImplementation="com.google.idea.blaze.base.prefetch.PrefetchServiceImpl"/>
-    <applicationService serviceInterface="com.google.idea.blaze.base.prefetch.RemoteArtifactPrefetcher"
-                    serviceImplementation="com.google.idea.blaze.base.prefetch.DefaultPrefetcher"/>
     <applicationService serviceImplementation="com.google.idea.blaze.base.wizard2.BlazeWizardUserSettingsStorage"/>
     <applicationService serviceInterface="com.google.idea.blaze.base.wizard2.BlazeWizardOptionProvider"
                         serviceImplementation="com.google.idea.blaze.base.wizard2.BazelWizardOptionProvider"/>
@@ -371,6 +369,8 @@
                     interface="com.google.idea.blaze.base.editor.BlazeHighlightStatsCollector"/>
     <extensionPoint qualifiedName="com.google.idea.blaze.AbsolutePathPatcher"
                     interface="com.google.idea.blaze.base.util.AbsolutePathPatcher"/>
+    <extensionPoint qualifiedName="com.google.idea.blaze.RemoteArtifactPrefetcher"
+        interface="com.google.idea.blaze.base.prefetch.RemoteArtifactPrefetcher"/>
   </extensionPoints>
 
   <application-components>
@@ -519,6 +519,7 @@
     <MacroTargetProvider implementation="com.google.idea.blaze.base.query.BlazeQueryMacroTargetProvider" order="last"/>
     <ArtifactStateHelper implementation="com.google.idea.blaze.google3.objfs.RemoteOutputStateProtoConverter"/>
     <BinaryPathRemapper implementation="com.google.idea.blaze.base.async.process.MacBinaryPathRemapper" order="last"/>
+    <RemoteArtifactPrefetcher implementation="com.google.idea.blaze.base.prefetch.DefaultPrefetcher" order="last"/>
   </extensions>
 
 </idea-plugin>

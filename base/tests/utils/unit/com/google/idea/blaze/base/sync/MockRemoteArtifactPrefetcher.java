@@ -23,6 +23,12 @@ import java.util.Collection;
 
 /** Mock RemoteArtifactPrefetcher that return empty list for all requests. */
 public class MockRemoteArtifactPrefetcher implements RemoteArtifactPrefetcher {
+
+  @Override
+  public boolean isAvailable() {
+    return true;
+  }
+
   @Override
   public ListenableFuture<?> loadFilesInJvm(Collection<RemoteOutputArtifact> outputArtifacts) {
     return Futures.immediateFuture(null);

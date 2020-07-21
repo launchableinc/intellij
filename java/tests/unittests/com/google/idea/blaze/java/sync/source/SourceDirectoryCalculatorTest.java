@@ -105,8 +105,8 @@ public class SourceDirectoryCalculatorTest extends BlazeTestCase {
 
     applicationServices.register(PrefetchService.class, new MockPrefetchService());
 
-    applicationServices.register(
-        RemoteArtifactPrefetcher.class, new MockRemoteArtifactPrefetcher());
+    registerExtensionPoint(RemoteArtifactPrefetcher.EP_NAME, RemoteArtifactPrefetcher.class)
+        .registerExtension(new MockRemoteArtifactPrefetcher());
 
     registerExtensionPoint(JavaLikeLanguage.EP_NAME, JavaLikeLanguage.class)
         .registerExtension(new JavaLikeLanguage.Java());

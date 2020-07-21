@@ -77,8 +77,8 @@ public class ScalaSourceDirectoryCalculatorTest extends BlazeTestCase {
     applicationServices.register(PackageManifestReader.class, new PackageManifestReader());
     applicationServices.register(PrefetchService.class, new MockPrefetchService());
     applicationServices.register(FileOperationProvider.class, new FileOperationProvider());
-    applicationServices.register(
-        RemoteArtifactPrefetcher.class, new MockRemoteArtifactPrefetcher());
+    registerExtensionPoint(RemoteArtifactPrefetcher.EP_NAME, RemoteArtifactPrefetcher.class)
+        .registerExtension(new MockRemoteArtifactPrefetcher());
 
     ExtensionPoint<JavaLikeLanguage> javaLikeLanguages =
         registerExtensionPoint(JavaLikeLanguage.EP_NAME, JavaLikeLanguage.class);

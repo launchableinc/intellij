@@ -126,11 +126,14 @@ public class JdepsFileReader {
     // TODO: handle prefetching for arbitrary OutputArtifacts
     List<OutputArtifact> outputArtifacts = diff.getUpdatedOutputs();
 
+    RemoteArtifactPrefetcher remoteArtifactPrefetcher = RemoteArtifactPrefetcher.getInstance();
+    if (remoteArtifactPrefetcher == null) {
+      return null;
+    }
     ListenableFuture<?> downloadArtifactsFuture =
-        RemoteArtifactPrefetcher.getInstance()
-            .downloadArtifacts(
-                /* projectName= */ project.getName(),
-                /* outputArtifacts= */ BlazeArtifact.getRemoteArtifacts(outputArtifacts));
+        remoteArtifactPrefetcher.downloadArtifacts(
+            /* projectName= */ project.getName(),
+            /* outputArtifacts= */ BlazeArtifact.getRemoteArtifacts(outputArtifacts));
     ListenableFuture<?> fetchLocalFilesFuture =
         PrefetchService.getInstance()
             .prefetchFiles(BlazeArtifact.getLocalFiles(outputArtifacts), true, false);
