@@ -115,6 +115,11 @@ public class BlazeJavaSyncPlugin implements BlazeSyncPlugin {
       SyncState.Builder syncStateBuilder,
       @Nullable SyncState previousSyncState,
       SyncMode syncMode) {
+    // Kohsuke
+    // patch suggested by https://github.com/bazelbuild/intellij/issues/490#issuecomment-454030118
+    // see https://launchableinc.atlassian.net/wiki/spaces/RnD/pages/482804256/Journal+Bazel+IntelliJ+plugin+doesn+t+resolve+all+dependencies
+    workingSet = null;
+
     JavaWorkingSet javaWorkingSet = null;
     if (workingSet != null) {
       javaWorkingSet =
