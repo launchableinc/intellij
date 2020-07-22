@@ -83,6 +83,20 @@ public final class BlazeJarLibrary extends BlazeLibrary {
         sourceJarManager.setHasSourceJarAttached(key, true);
       }
     }
+    /*
+      Kohsuke Hack
+
+      According to javadoc of BlazeSourceJarNavigationPolicy, Bazel IntelliJ plugin intentionally
+      lazy-attach source jar to library jar. But that time consuming index is done for reasons.
+      For example, to find usages all across, we do need to index the whole jar.
+
+      Our project is still small enough, so I think we can probably take a hit of the added index time.
+
+      AttachSourcesFilter is the extension point to control this behaviour, so ideally I'd write an
+      extension that always returns true from shouldAlwaysAttachSourceJar(), but rather than
+      spending more time figuring that out, I'm just opting for a quick & dirty solution.
+     */
+    sourceJarManager.setHasSourceJarAttached(key, true);
 
     if (!sourceJarManager.hasSourceJarAttached(key)) {
       return;
