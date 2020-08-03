@@ -19,8 +19,8 @@ http_archive(
 http_archive(
     name = "intellij_ce_2020_1",
     build_file = "@//intellij_platform_sdk:BUILD.idea201",
-    sha256 = "45b5911850fe8e75fab652e8d8a211d548786eb094ac40d96091d340c3c437f9",
-    url = "https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/ideaIC/2020.1.2/ideaIC-2020.1.2.zip",
+    sha256 = "19eed1ff0d6aa7f88ff9fd6da336d79938207f793a80810fb2ba205229ad1f4a",
+    url = "https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/ideaIC/2020.2/ideaIC-2020.2.zip",
 )
 
 # The plugin api for IntelliJ UE 2019.3. This is required to run UE-specific
