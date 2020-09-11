@@ -143,6 +143,20 @@ http_archive(
     url = "https://plugins.jetbrains.com/files/1347/76628/scala-intellij-bin-2020.1.7.zip",
 )
 
+# Scala plugin for IntelliJ CE. Required at compile-time for scala-specific features.
+http_archive(
+    name = "scala_2020_2",
+    build_file_content = "\n".join([
+        "java_import(",
+        "    name = 'scala',",
+        "    jars = glob(['Scala/lib/*.jar']),",
+        "    visibility = ['//visibility:public'],",
+        ")",
+    ]),
+    sha256 = "bb2cae5675ad51d8fe27d85694aa35fb77f231ac96159561b16c041173f91e8f",
+    url = "https://plugins.jetbrains.com/files/1347/96539/scala-intellij-bin-2020.2.25.zip",
+)
+
 # The plugin api for Android Studio 4.0. This is required to build ASwB,
 # and run integration tests.
 http_archive(
