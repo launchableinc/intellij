@@ -38,10 +38,6 @@
         implementationClass="com.google.idea.blaze.scala.run.producers.BlazeScalaRunLineMarkerContributor"
         language="Scala"
         order="first"/>
-    <runLineMarkerContributor
-        implementationClass="com.google.idea.blaze.scala.run.producers.BlazeScalaTestRunLineMarkerContributor"
-        language="Scala"
-        order="first"/>
     <stepsBeforeRunProvider
         implementation="com.google.idea.blaze.scala.run.producers.GenerateDeployableJarTaskProvider"/>
   </extensions>
